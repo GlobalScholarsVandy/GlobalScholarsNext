@@ -12,21 +12,19 @@ export const postRouter = createTRPCRouter({
         name: z.string(),
     }))
     .query(({ input, ctx }) => {
-        const name = input.name;
-        return ctx.prisma.post.findUnique({
+        return ctx.prisma.post.findMany({
             where: {
-                id:input.name,
+                title: input.name,
             },
-        });
-    }),
+        })
+    })
+
+    ,
     postExample: publicProcedure
     .input(z.object({ 
         title: z.string(),
         content: z.string(),
         tags: z.array(z.string()),
-        location: z.string(),
-        program: z.string(),
-        owner: z.string(),
      }))
     .mutation(({ input, ctx }) => {
         //post string to database
@@ -35,13 +33,7 @@ export const postRouter = createTRPCRouter({
                 title: input.title,
                 content: input.content,
                 tags: input.tags,
-                location: input.location,
-                program: input.program,
                 timestamp: new Date(),
-                owner:  input.owner,
-                saves: 0,
-                likes: 0,
-                dislikes: 0,
             },
         })
         

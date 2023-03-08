@@ -41,18 +41,26 @@ model Example {
 // });
 
 model Post {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    owner     String   @db.ObjectId
-    timestamp DateTime
-    title     String   @db.String
-    content   String   @db.String
-    tags      String[]
-    likes     Int      @default(0)
-    dislikes  Int      @default(0)
-    saves     Int      @default(0)
-    location  String   @db.ObjectId
-    program   String   @db.ObjectId
-    user      User     @relation(fields: [owner], references: [id], onDelete: Cascade)
+    id         String    @id @default(auto()) @map("_id") @db.ObjectId
+    timestamp  DateTime
+    title      String    @db.String
+    content    String    @db.String
+    tags       String[]
+    upvotes    Int       @default(0)
+    downvotes  Int       @default(0)
+    saves      Int       @default(0)
+    // location   Location? @relation(fields: [locationId], references: [id])
+    // program    Program?  @relation(fields: [programId], references: [id])
+    // owner      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    // locationId String?   @db.ObjectId
+    // programId  String?   @db.ObjectId
+    // userId     String    @db.ObjectId
+    Program    Program?  @relation(fields: [programId], references: [id])
+    programId  String?   @db.ObjectId
+    Location   Location? @relation(fields: [locationId], references: [id])
+    locationId String?   @db.ObjectId
+    User       User?     @relation(fields: [userId], references: [id])
+    userId     String?   @db.ObjectId
 }
 
 model Program {
@@ -78,6 +86,7 @@ model Program {
     sightseeing_rating      Int      @default(0)
     top_tags                String[]
     like_cnt                Int      @default(0)
+    posts                   Post[]
 }
 
 model Location {
@@ -93,6 +102,7 @@ model Location {
     sightseeing_rating   Int      @default(0)
     top_tags             String[]
     image_link           String
+    Post                 Post[]
 }
 
 // const Comment = new Schema({

@@ -104,9 +104,6 @@ const CityPost = () => {
     const post = {
       title: state.title,
       content: state.content,
-      city: state.city,
-      program_name: state.program_name,
-      owner: "",
       tags: [],
     };
     console.log(`Posting...`);
