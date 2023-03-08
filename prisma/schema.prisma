@@ -1,0 +1,175 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mongodb"
+    // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
+    // Further reading:
+    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
+    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+    url      = env("DATABASE_URL")
+}
+
+model Example {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    text      String   @db.String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+//Post Model based on mogoose schema
+// const Post = new Schema({
+//   owner: { type: Schema.ObjectId, ref: "User", required: true },
+//   timestamp: { type: Date },
+//   title: { type: String, default: "" },
+//   content: { type: String, default: "" },
+//   tags: [{
+//     type: String,
+//     required: true,
+//     enum: ["Travel", "Language", "Reviews", "Academic", "Culture", "Other", "Sights",
+//     "Housing", "Social", "Cost", "Foods", "Weather", "Location", "Safety"],
+//   }],
+//   likes: { type: Number, default: 0 },
+//   dislikes: { type: Number, default: 0 },
+//   saves: { type: Number, default: 0 },
+//   location: { type: Schema.ObjectId, ref: "Location" },
+//   program: { type: Schema.ObjectId, ref: "Program" },
+// });
+
+model Post {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    owner     String   @db.ObjectId
+    timestamp DateTime
+    title     String   @db.String
+    content   String   @db.String
+    tags      String[]
+    likes     Int      @default(0)
+    dislikes  Int      @default(0)
+    saves     Int      @default(0)
+    location  String   @db.ObjectId
+    program   String   @db.ObjectId
+    user      User     @relation(fields: [owner], references: [id], onDelete: Cascade)
+}
+
+// Location Model based on mogoose schema
+// const Location = new Schema({
+//   // Scraped data
+//   city: { type: String, index: { unique: true }, required: true},
+//   country: { type: String },
+//   description: { type: String },
+//   programs: [ { type: Schema.ObjectId, ref: "Program" } ],
+//   like_cnt: { type: Number, default: 0 },
+
+//   // Forum data
+//   overall_rating: { type: Number, default: 0 },
+//   safety_rating: { type: Number, default: 0 },
+//   affordability_rating: { type: Number, default: 0 },
+//   sightseeing_rating: { type: Number, default: 0 },
+//   top_tags: [{ type: String }],
+//   image_link: { type: String },
+// });
+
+model Location {
+    id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+    city                 String   @unique
+    country              String
+    description          String
+    programs             String[]
+    like_cnt             Int      @default(0)
+    overall_rating       Int      @default(0)
+    safety_rating        Int      @default(0)
+    affordability_rating Int      @default(0)
+    sightseeing_rating   Int      @default(0)
+    top_tags             String[]
+    image_link           String
+}
+
+// const Comment = new Schema({
+//   owner: { type: Schema.ObjectId, ref: "Post", required: true },
+//   timestamp: { type: Date },
+//   content: { type: String, default: "" },
+//   likes: { type: Number, default: 0 },
+//   dislikes: { type: Number, default: 0 },
+//   saves: { type: Number, default: 0 },
+// });
+
+model Comment {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    owner     String   @db.ObjectId
+    timestamp DateTime
+    content   String   @db.String
+    likes     Int      @default(0)
+    dislikes  Int      @default(0)
+    saves     Int      @default(0)
+}
+
+// Necessary for Next auth
+model Account {
+    id                String  @id @default(auto()) @map("_id") @db.ObjectId
+    userId            String  @db.ObjectId
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String? @db.String
+    access_token      String? @db.String
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String? @db.String
+    session_state     String?
+    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
+    id           String   @id @default(auto()) @map("_id") @db.ObjectId
+    sessionToken String   @unique
+    userId       String   @db.ObjectId
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+//   background_url: { type: String, default: "" },
+//   city: { type: String, default: "" },
+//   program: { type: Schema.Types.ObjectId, ref: "Program" },
+//   majors: [{ type: String, default: "" }],
+//   minors: [{ type: String, default: "" }],
+//   grad_year: { type: Date },
+//   bio: { type: String, default: "" },
+
+//   // post interactions
+//   posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+//   saves: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+//   likes: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+//   dislikes: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+model User {
+    id             String    @id @default(auto()) @map("_id") @db.ObjectId
+    name           String?
+    email          String?   @unique
+    emailVerified  DateTime?
+    image          String?
+    accounts       Account[]
+    sessions       Session[]
+    background_url String?   @db.String
+    city           String?
+    program        String?   @db.ObjectId
+    majors         String[]
+    minors         String[]
+    grad_year      DateTime?
+    bio            String?   @default("") @db.String
+    posts          Post[]
+}
+
+model VerificationToken {
+    id         String   @id @default(auto()) @map("_id") @db.ObjectId
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
+}
