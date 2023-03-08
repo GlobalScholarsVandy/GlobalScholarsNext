@@ -55,23 +55,30 @@ model Post {
     user      User     @relation(fields: [owner], references: [id], onDelete: Cascade)
 }
 
-// Location Model based on mogoose schema
-// const Location = new Schema({
-//   // Scraped data
-//   city: { type: String, index: { unique: true }, required: true},
-//   country: { type: String },
-//   description: { type: String },
-//   programs: [ { type: Schema.ObjectId, ref: "Program" } ],
-//   like_cnt: { type: Number, default: 0 },
-
-//   // Forum data
-//   overall_rating: { type: Number, default: 0 },
-//   safety_rating: { type: Number, default: 0 },
-//   affordability_rating: { type: Number, default: 0 },
-//   sightseeing_rating: { type: Number, default: 0 },
-//   top_tags: [{ type: String }],
-//   image_link: { type: String },
-// });
+model Program {
+    id                      String   @id @default(auto()) @map("_id") @db.ObjectId
+    program_name            String   @unique
+    geo_link                String
+    location                String   @db.ObjectId
+    budget                  String   @db.ObjectId
+    terms                   String[]
+    restrictions            String
+    type                    String
+    calendar                String
+    housing                 String[]
+    min_gpa                 String
+    language_of_instruction String
+    language_prerequisite   String
+    additional_prerequisite String
+    image_link              String
+    program_link            String
+    overall_rating          Int      @default(0)
+    safety_rating           Int      @default(0)
+    affordability_rating    Int      @default(0)
+    sightseeing_rating      Int      @default(0)
+    top_tags                String[]
+    like_cnt                Int      @default(0)
+}
 
 model Location {
     id                   String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -134,19 +141,6 @@ model Session {
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-//   background_url: { type: String, default: "" },
-//   city: { type: String, default: "" },
-//   program: { type: Schema.Types.ObjectId, ref: "Program" },
-//   majors: [{ type: String, default: "" }],
-//   minors: [{ type: String, default: "" }],
-//   grad_year: { type: Date },
-//   bio: { type: String, default: "" },
-
-//   // post interactions
-//   posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
-//   saves: [{ type: Schema.Types.ObjectId, ref: "Post" }],
-//   likes: [{ type: Schema.Types.ObjectId, ref: "Post" }],
-//   dislikes: [{ type: Schema.Types.ObjectId, ref: "Post" }],
 model User {
     id             String    @id @default(auto()) @map("_id") @db.ObjectId
     name           String?

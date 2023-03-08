@@ -7,6 +7,7 @@ import { BiChevronDown } from "react-icons/bi";
 import { AiOutlineSearch } from "react-icons/ai";
 import images from "images";
 import tw from "tailwind-styled-components";
+import { api } from "~/utils/api";
 
 export const MakePostBox = tw.div`
     flex 
@@ -64,11 +65,12 @@ const CityPost = () => {
   //   const dispatch = useDispatch();
   //   const navigate = useNavigate();
   //   const { postInfo, success, loading } = useSelector((state) => state.post);
+  const addpost = api.post.postExample.useMutation();
 
-  let [postAnon, setPostAnon] = useState("current-user");
+  const [postAnon, setPostAnon] = useState("current-user");
 
-  let [error, setError] = useState("");
-  let [state, setState] = useState({
+  const [error, setError] = useState("");
+  const [state, setState] = useState({
     title: "",
     content: "",
     tags: [],
@@ -104,16 +106,11 @@ const CityPost = () => {
       content: state.content,
       city: state.city,
       program_name: state.program_name,
+      owner: "",
+      tags: [],
     };
     console.log(`Posting...`);
-    dispatch(submitNewForumPost(post));
-
-    if (success) {
-      const forumNav = state.city;
-      // reset post state
-      dispatch(resetPost());
-      navigate(`/forum/${forumNav}`);
-    }
+    addpost.mutate(post);
   };
 
   const onChange = (ev) => {

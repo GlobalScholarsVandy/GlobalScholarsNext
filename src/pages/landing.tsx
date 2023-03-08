@@ -3,9 +3,11 @@ import SideBar from "~/components/all-pages/sidebar";
 import SearchBar from "~/components/landing-page/search-bar";
 import ScrollingImages from "~/components/all-pages/scrolling-images"
 import images from "images";
+import {signIn, signOut, useSession} from "next-auth/react";
 
 
 const Landing: NextPage = () => {
+    const { data: sessionData } = useSession();
     return (
         <div id="forum-page" className="flex h-screen ">
           <SideBar />
@@ -37,6 +39,12 @@ const Landing: NextPage = () => {
               </div>
             </div>
           </div>
+          <button
+        className="absolute right-1 top-2 rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+        onClick={sessionData ? () => void signOut() : () => void signIn("google")}
+      >
+        {sessionData ? "Sign out" : "Sign in"}
+      </button>
     
           {/* {loggedIn ? (
             <div className="absolute right-1 top-2">

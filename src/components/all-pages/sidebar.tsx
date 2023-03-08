@@ -83,17 +83,16 @@ const SideBar = () => {
           <SidebarNavigationLinkTitle>Calculator</SidebarNavigationLinkTitle>
         </NavigationContainer>
         <NavigationContainer
-          // onClick={() => handleNavigation(`/profile/${userInfo.username}`)}
+          onClick={() => handleNavigation(`/profile`)}
         >
           {session && session.user !== undefined ? (
             <img
               src={session.user.image}
               alt="profile"
               className="rounded-full h-[36px] w-[36px]"
-              onClick={() => handleNavigation(`/profile/${session.user.name}`)}
             />
           ) : (
-            <BsPersonCircle size={36} onClick={()=> handleNavigation('/login')} />
+            <BsPersonCircle size={36} />
           )}
           <SidebarNavigationLinkTitle>Profile</SidebarNavigationLinkTitle>
         </NavigationContainer>
